@@ -1,7 +1,9 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 const NewAppointmentScreen = () => {
+  const router = useRouter();
   const [fullName, setFullName] = useState('');
   const [age, setAge] = useState('');
   const [gender, setGender] = useState('');
@@ -13,6 +15,12 @@ const NewAppointmentScreen = () => {
   const handleSubmit = () => {
     // Handle form submission
     console.log('Appointment Details:', { fullName, age, gender, phoneNumber, date, time, symptoms });
+    // Navigate to booking result screen
+    let isSuccess = true; // Simulate success or failure
+    router.push({
+      pathname: '/bookingResult',
+      params: { isSuccess: isSuccess ? 'true' : 'false', fullName, date, time } // Pass parameters if needed
+    }); // Uncomment this line if using expo-router
   };
 
   return (

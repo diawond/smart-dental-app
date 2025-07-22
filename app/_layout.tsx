@@ -1,8 +1,8 @@
 // app/_layout.tsx
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth } from '../backend/firebase'; // ✅ ให้แน่ใจว่า path ตรงกับไฟล์ของคุณ
 import React, { useEffect, useState } from 'react';
+import { auth } from '../backend/firebase'; // ✅ ให้แน่ใจว่า path ตรงกับไฟล์ของคุณ
 
 export default function Layout() {
   const [loading, setLoading] = useState(true);
@@ -53,6 +53,7 @@ export default function Layout() {
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="newbooking" options={{ headerShown: true, title: 'Book New Appointment' }} />
+      <Stack.Screen name="bookingResult" options={{ headerShown: true, title: 'Booking Result' }} />
     </Stack>
   );
 }
