@@ -1,29 +1,58 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
+// app/_layout.tsx
+import { Stack, useRouter, useSegments } from 'expo-router';
+import { onAuthStateChanged, User } from 'firebase/auth';
+import { auth } from '../backend/firebase'; // ✅ ให้แน่ใจว่า path ตรงกับไฟล์ของคุณ
+import React, { useEffect, useState } from 'react';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+export default function Layout() {
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+  const segments = useSegments(); // ตัวอย่าง: ['/login'], ['/home']
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  useEffect(() => {
+    // เพิ่มการตรวจสอบว่า auth มีค่าหรือไม่
+    if (!auth) {
+      console.error('❌ Firebase auth is undefined');
+      setLoading(false);
+      return;
+    }
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
-  }
+    const unsubscribe = onAuthStateChanged(auth, (user: User | null) => {
+      console.log('🔐 onAuthStateChanged:', user?.email);
+      setIsLoggedIn(!!user);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const currentPath = segments.join('/') || 'index';
+
+      console.log('🔍 Current path:', currentPath, 'Is logged in:', isLoggedIn);
+      console.log('🔍 Segments:', segments);
+
+      // เพิ่มเงื่อนไข: อย่าบล็อกหน้า newbooking
+      if (!isLoggedIn && !currentPath.includes('login') && !currentPath.includes('newbooking')) {
+        console.log('Redirecting to login...');
+        router.replace('/login');
+      } else if (isLoggedIn && (currentPath.includes('login') || currentPath === 'index' || currentPath === '')) {
+        console.log('Redirecting to tabs...');
+        router.replace('/(tabs)/home'); // เปลี่ยนไปหน้า home ใน tabs
+      }
+    }
+  }, [loading, isLoggedIn, segments]);
+
+  if (loading) return null;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+    <Stack>
+      <Stack.Screen name="index" options={{ headerShown: false }} />
+      <Stack.Screen name="login" options={{ headerShown: false }} />
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+      <Stack.Screen name="newbooking" options={{ headerShown: true, title: 'Book New Appointment' }} />
+    </Stack>
   );
 }
