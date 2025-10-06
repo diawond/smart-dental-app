@@ -4,13 +4,13 @@ import { initializeApp, getApps, FirebaseApp } from "firebase/app";
 import { getAuth, Auth } from "firebase/auth";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyCxq5MjwpAyt82T1REH5bRI6-9z9YGg2bc",
-  authDomain: "smart-dental-booking.firebaseapp.com",
-  projectId: "smart-dental-booking",
-  storageBucket: "smart-dental-booking.firebasestorage.app",
-  messagingSenderId: "763217718461",
-  appId: "1:763217718461:web:9ff565f43e4c7360695bd4",
-  measurementId: "G-GXY29NHKZE"
+  apiKey: "A",
+  authDomain: "",
+  projectId: "",
+  storageBucket: "",
+  messagingSenderId: "",
+  appId: "",
+  measurementId: ""
 };
 
 // Initialize Firebase (ป้องกันการ initialize ซ้ำ)
